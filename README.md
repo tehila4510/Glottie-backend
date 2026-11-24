@@ -4,14 +4,14 @@
 
 # 🦉 Glottie — AI-Powered English Learning Platform
 
-### A fun, smart, and effective way to learn English
+### Learn English the smart way: adaptive practice, gamification, and a personal AI tutor
 
-**Full-Stack Application · React + C# .NET + SQL Server**
+**Backend (this repo) · ASP.NET Core Web API · Entity Framework Core · SQL Server · Google Gemini**
 
-[![React](https://img.shields.io/badge/Frontend-React_18-61DAFB?style=for-the-badge&logo=react&logoColor=white)](https://react.dev)
 [![.NET](https://img.shields.io/badge/Backend-.NET_Web_API-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)](https://dotnet.microsoft.com)
 [![SQL Server](https://img.shields.io/badge/Database-SQL_Server-CC2927?style=for-the-badge&logo=microsoftsqlserver&logoColor=white)](https://www.microsoft.com/sql-server)
 [![Gemini](https://img.shields.io/badge/AI-Google_Gemini-8E75B2?style=for-the-badge&logo=googlegemini&logoColor=white)](https://ai.google.dev)
+[![React](https://img.shields.io/badge/Frontend-React_18-61DAFB?style=for-the-badge&logo=react&logoColor=white)](https://github.com/tehila4510/glottie-frontend)
 
 </div>
 
@@ -19,13 +19,13 @@
 
 ## 📌 Overview
 
-**Glottie** is a **Full-Stack** English learning application inspired by Duolingo. It combines a gamified learning experience (XP points, hearts, and streaks), an adaptive placement test, a wide variety of question types, personalized progress tracking, and an AI conversation tutor for free-form practice.
+**Glottie** is a full-stack English learning application built around three ideas:
 
-The project is split across two repositories — a **Frontend** client and a **Backend** server — and is built from three main components:
+- **Adaptive learning** — a placement test sets your starting level (A1–C2), and the question engine keeps adjusting difficulty to your performance in real time.
+- **Gamification** — XP, hearts, daily streaks, and celebration animations keep practice motivating.
+- **An AI conversation tutor** — free-form chat practice with instant corrections, powered by Google Gemini.
 
-- 🎨 **Frontend** — React 18 + Vite + Redux Toolkit
-- ⚙️ **Backend** — C# .NET Web API using a layered (Clean) architecture
-- 🗄️ **Database** — SQL Server with Entity Framework Core (Code-First + Migrations)
+This repository contains the **backend**: a REST API with a layered architecture, JWT authentication, an adaptive question-selection algorithm, and background workers.
 
 ---
 
@@ -35,12 +35,12 @@ The project is split across two repositories — a **Frontend** client and a **B
 
 | Component | Description | Repository |
 |:---:|:---|:---:|
-| ⚙️ **Backend (C# + SQL)** | API server, business logic, and database | **[github.com/tehila4510/MyProject](https://github.com/tehila4510/MyProject)** |
-| 🎨 **Frontend (React)** | User interface and client application | **[github.com/tehila4510/React-Project](https://github.com/tehila4510/React-Project)** |
+| ⚙️ **Backend** (C# + SQL Server) | API server, business logic, and database | **[tehila4510/glottie-backend](https://github.com/tehila4510/glottie-backend)** *(this repo)* |
+| 🎨 **Frontend** (React) | User interface and client application | **[tehila4510/glottie-frontend](https://github.com/tehila4510/glottie-frontend)** |
 
 </div>
 
-> 💡 The two projects work together: the React frontend sends requests to the .NET backend, which communicates with the SQL Server database and the Google Gemini AI service.
+> 💡 The React frontend sends requests to this .NET backend, which communicates with SQL Server and the Google Gemini API.
 
 ---
 
@@ -49,18 +49,15 @@ The project is split across two repositories — a **Frontend** client and a **B
 - [Architecture Overview](#-architecture-overview)
 - [Tech Stack](#-tech-stack)
 - [Features](#-features)
+- [Under the Hood](#-under-the-hood)
 - [Database Design](#-database-design)
-- [Backend Structure](#-backend-structure)
+- [Project Structure](#-project-structure)
 - [API Endpoints](#-api-endpoints)
 - [The AI Tutor](#-the-ai-tutor-glottie-chat)
 - [Running the Project](#-running-the-project)
-- [Screens & Branding Gallery](#-screens--branding-gallery)
-
 ---
 
 ## 🏗 Architecture Overview
-
-The diagram below shows how the three components connect:
 
 ```mermaid
 flowchart LR
@@ -89,70 +86,78 @@ flowchart LR
     SVC -->|"AI Tutor"| AI
 ```
 
-**Typical request flow:** The user performs an action in the React app → RTK Query sends an HTTP request with a JWT token to the .NET API → the Controller passes it to a Service (business logic) → the Repository accesses the database through Entity Framework → the response travels back to the user.
+**Typical request flow:** the user acts in the React app → RTK Query sends an HTTP request with a JWT → the Controller passes it to a Service (business logic) → the Repository reads or writes through Entity Framework → the response returns to the client.
 
 ---
 
 ## 🛠 Tech Stack
 
-### 🎨 Frontend
-| Technology | Role |
-|---|---|
-| **React 18** | UI library |
-| **Vite** | Build tool and fast development server |
-| **Redux Toolkit + RTK Query** | State management and API calls with caching |
-| **React Router v6** | Client-side routing |
-| **Material UI (MUI)** | UI component library |
-| **React Toastify** | User notifications |
-| **Web Speech API** | Text-to-speech for reading questions aloud |
-
-### ⚙️ Backend
+### ⚙️ Backend (this repo)
 | Technology | Role |
 |---|---|
 | **C# / .NET Web API** | REST API server |
-| **Entity Framework Core** | ORM for database access (Code-First) |
+| **Entity Framework Core** | ORM, Code-First with Migrations |
 | **SQL Server** | Relational database |
-| **JWT Bearer Authentication** | Secure authentication and authorization |
+| **JWT Bearer Authentication** | Authentication and role-based authorization |
 | **AutoMapper** | Mapping between entities and DTOs |
-| **Google Gemini API** | AI engine powering the conversation tutor |
-| **BackgroundService (Worker)** | Automatic reset of hearts every 24 hours |
-| **Swagger / OpenAPI** | API documentation and testing |
+| **Google Gemini API** | Engine behind the conversation tutor |
+| **BackgroundService** | Scheduled automatic reset of hearts |
+| **IMemoryCache** | Caching of user answer history for the question algorithm |
+| **Swagger / OpenAPI** | Interactive API documentation |
+
+### 🎨 Frontend ([glottie-frontend](https://github.com/tehila4510/glottie-frontend))
+React 18 · Vite · Redux Toolkit + RTK Query · React Router · Material UI · Web Speech API
 
 ---
 
 ## ✨ Features
 
 ### 🎓 Learning Experience
-- **Placement Test** — a short test that determines the user's starting level (A1–C2).
-- **Manual Level Selection** — users can choose a level, with a visual description for each one.
+- **Placement Test** — determines the user's starting level (A1–C2).
+- **Manual Level Selection** — with a visual description of each level.
 - **9 Skill Areas** — vocabulary, grammar, verbs, listening, reading, writing, pronunciation, phrases, and chat.
-- **Versatile Question Engine** — up to 18 different question types (multiple choice, fill-in-the-blank, drag-and-drop, matching, ordering, listening, pronunciation, translation, and more), implemented using a smart **bitmask**.
-- **Real-Time Feedback** — correct/incorrect responses with instant explanations.
+- **Versatile Question Engine** — up to 18 question types (multiple choice, fill-in-the-blank, drag-and-drop, matching, ordering, listening, pronunciation, translation, and more), encoded compactly with a **bitmask**.
+- **Real-Time Feedback** — instant correct/incorrect results with explanations.
 
 ### 🎮 Gamification
 | | Feature | Description |
 |:---:|---|---|
-| <img src="docs/assets/star.png" width="26"/> | **XP Points** | Earn points for every exercise and level up as you progress |
-| ❤️ | **Hearts** | A limited number of mistakes per session, reset automatically every 24 hours |
+| <img src="docs/assets/star.png" width="26"/> | **XP Points** | Earned at the end of every session, with bonuses for high scores and hard questions |
+| ❤️ | **Hearts** | A limited number of mistakes, restored automatically by a background worker |
 | <img src="docs/assets/streak.png" width="26"/> | **Daily Streak** | Tracks consecutive days of learning |
-| 🎉 | **Confetti & Celebration** | A rewarding completion animation at the end of each exercise |
+| 🎉 | **Celebration** | A rewarding animation at the end of each session |
 
 ### 📊 Progress Tracking
-- **Progress Dashboard** — weekly XP chart, accuracy rings, and a per-skill breakdown.
-- **"My Mistakes"** — a page that collects every incorrect answer alongside the correct one, so users can learn from their errors.
+- **Progress Dashboard** — weekly XP chart, accuracy rings, and per-skill breakdown.
+- **"My Mistakes"** — every incorrect answer next to the correct one, so users learn from their errors.
 - **Heatmap** — a visual tracker of practice days.
 
 ### 👤 User Management
-- Secure registration and login with **JWT**.
-- Profile picture (avatar) upload with live preview.
-- Editing of name, email, and password.
-- Session persistence in `localStorage` (users stay logged in after a refresh).
+- Registration and login with **JWT**.
+- Profile picture upload, plus editing of name, email, and password.
+- Persistent sessions, so users stay logged in after a refresh.
+
+---
+
+## 🧠 Under the Hood
+
+A few of the more interesting parts of the backend:
+
+**Adaptive question selection.** Each next question is chosen based on the user's level, how many answers they got right in the current session, and their answer history. The target difficulty moves up or down as they perform, and candidate questions are weighted so that recently answered ones are less likely to repeat. Queries are filtered at the database level, and answer history is cached in memory.
+
+**Session scoring.** The session score takes into account the question's level, the time taken to answer, and the number of attempts. XP is then awarded from the score, with bonuses for strong results and for solving hard questions on the first try. Very short sessions earn no XP.
+
+**Streak and level logic.** Streaks are updated from the date of the last activity, and the user's level is derived from accumulated XP against per-level thresholds.
+
+**Background worker.** A `BackgroundService` runs on a schedule (every two hours) and restores hearts for all users, using scoped services inside the hosted service.
+
+**Security.** All endpoints require a JWT, the user identity is read from the token claims rather than from request bodies, and admin-only endpoints are protected with role-based authorization.
 
 ---
 
 ## 🗄 Database Design
 
-The database runs on **SQL Server** and is managed with **Entity Framework Core** using a **Code-First** approach (tables are generated from the C# classes via Migrations).
+The database runs on **SQL Server**, managed by **Entity Framework Core** with a **Code-First** approach (tables are generated from the C# classes through Migrations).
 
 ```mermaid
 erDiagram
@@ -212,28 +217,29 @@ erDiagram
 **Core tables:**
 - **User** — user details, level, XP, hearts, and streak.
 - **Session** — a single practice session with its score and number of correct answers.
-- **Question** + **QuestionOption** — the question bank and possible answers.
-- **UserAnswer** — a record of every answer a user submitted (powers the "My Mistakes" page).
-- **UserSkillProgress** — the user's mastery level in each skill.
+- **Question** + **QuestionOption** — the question bank and its possible answers.
+- **UserAnswer** — every answer a user submitted (powers the "My Mistakes" page).
+- **UserSkillProgress** — the user's mastery in each skill.
 
-> **Levels and skills** are managed as static data in code (6 CEFR levels from A1 to C2, and 9 skills).
+> **Levels and skills** are static data in code (6 CEFR levels from A1 to C2, and 9 skills).
 
 ---
 
-## 📂 Backend Structure
+## 📂 Project Structure
 
-The server is built with a **layered (Clean) architecture** for clear separation of concerns:
+The server uses a **layered architecture** for a clear separation of concerns:
 
 ```
-MyProject/
+glottie-backend/
 ├── MyProject/        → API layer (Controllers, Program.cs, configuration)
-├── Services/         → Business logic layer (Services, AutoMapper, Workers)
-├── Repository/       → Data access layer (Entities, Repositories, Interfaces)
-├── DataContext/      → EF Core DbContext + all Migrations
-└── Common/           → Shared code (DTOs, Enums, Exceptions, Static Data)
+├── Services/         → Business logic (Services, AutoMapper, background Workers)
+├── Repository/       → Data access (Entities, Repositories, Interfaces)
+├── DataContext/      → EF Core DbContext + Migrations
+├── Common/           → Shared code (DTOs, Enums, Exceptions, Static Data)
+└── docs/assets/      → Logo and screenshots used in this README
 ```
 
-**The benefit:** each layer only depends on the layer beneath it, which keeps the code organized, testable, and easy to maintain.
+Each layer depends only on the layer beneath it, which keeps the code organized and easy to maintain and test.
 
 ---
 
@@ -242,7 +248,7 @@ MyProject/
 | Controller | Example Endpoints | Role |
 |---|---|---|
 | **User** | `POST /api/User/register`, `POST /api/User/login`, `POST /api/User/lose-heart` | Registration, login, user management |
-| **Quiz** | `POST /api/Quiz/start-session`, `GET /api/Quiz/next-question/{id}`, `POST /api/Quiz/submit-answer` | Managing the practice flow |
+| **Quiz** | `POST /api/Quiz/start-session`, `GET /api/Quiz/next-question/{id}`, `POST /api/Quiz/submit-answer`, `POST /api/Quiz/end-session/{id}` | The practice flow |
 | **Question** / **QuestionOption** | `GET/POST/PUT/DELETE` | Managing the question bank |
 | **Session** | `GET /api/Session/my-sessions` | Session history |
 | **UserAnswer** | `GET /api/UserAnswer/my-answers` | The user's answers |
@@ -250,7 +256,7 @@ MyProject/
 | **Skill** | `GET /api/Skill` | List of skills |
 | **Chat** | `POST /api/Chat/ask` | Conversation with the AI tutor |
 
-> All endpoints can be conveniently tested via **Swagger** while the server is running.
+> All endpoints can be tested through **Swagger** while the server runs in Development mode.
 
 ---
 
@@ -262,48 +268,57 @@ MyProject/
 
 One of the project's most advanced features is a **virtual English tutor** for free-form conversation, powered by **Google Gemini**.
 
-- The server stores the **conversation history** and sends it along with every new message as context.
-- A **system instruction** guides the AI to speak in simple English, highlight and correct mistakes, and always end with a follow-up question that keeps the conversation going.
-- This lets users practice English through natural conversation and receive corrections in real time.
+- The conversation history travels with every new message, so the tutor always has context.
+- A **system instruction** guides the AI to speak in simple English, point out and correct mistakes, and end each reply with a follow-up question that keeps the conversation going.
+- Users practice English through natural conversation and get corrections in real time.
 
 ---
 
 ## 🚀 Running the Project
 
 ### Prerequisites
-- **Node.js** version 18 or higher
 - **.NET SDK**
 - **SQL Server** (or SQL Server Express / LocalDB)
+- **Node.js 18+** (for the frontend)
+- A **Google Gemini API key**
 
 ### 1️⃣ Run the Backend
 
 ```bash
-# Clone the backend repository
-git clone https://github.com/tehila4510/MyProject.git
-cd MyProject
-
-# Configure the connection string and JWT key in appsettings.json
-# Create the database from the migrations:
-dotnet ef database update
-
-# Run the server
-dotnet run
-# The API will start at https://localhost:7185
+git clone https://github.com/tehila4510/glottie-backend.git
+cd glottie-backend
 ```
 
-> ⚠️ In `appsettings.json` you must configure `ConnectionStrings:DefaultConnection` (SQL Server connection), `Jwt:Key`, and `GeminiSettings:ApiKey` (for the AI tutor).
+Create `MyProject/appsettings.json` (it is excluded from version control because it holds secrets):
+
+```json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=(localdb)\\MSSQLLocalDB;Database=Glottie;Trusted_Connection=True;"
+  },
+  "Jwt": {
+    "Key": "replace-with-a-long-random-secret-at-least-32-characters"
+  },
+  "GeminiSettings": {
+    "ApiKey": "your-gemini-api-key"
+  }
+}
+```
+
+Then create the database and start the server:
+
+```bash
+dotnet ef database update --project DataContext --startup-project MyProject
+dotnet run --project MyProject
+# Swagger UI is available in Development mode
+```
 
 ### 2️⃣ Run the Frontend
 
 ```bash
-# Clone the frontend repository
-git clone https://github.com/tehila4510/React-Project.git
-cd React-Project/my-react-app
-
-# Install dependencies
+git clone https://github.com/tehila4510/glottie-frontend.git
+cd glottie-frontend/my-react-app
 npm install
-
-# Run the app
 npm run dev
 # The app will open at http://localhost:5173
 ```
@@ -316,45 +331,9 @@ npm run dev
 
 ---
 
-## 🖼 Screens & Branding Gallery
-
 <div align="center">
 
-<img src="docs/assets/mascots.png" alt="Glottie Mascots" width="480" />
-
-</div>
-
-### Skill Areas in the App
-<div align="center">
-
-<img src="docs/assets/vocabulary.png" width="80" title="Vocabulary"/>
-<img src="docs/assets/grammar.png" width="80" title="Grammar"/>
-<img src="docs/assets/verbs.png" width="80" title="Verbs"/>
-<img src="docs/assets/listening.png" width="80" title="Listening"/>
-<img src="docs/assets/reading.png" width="80" title="Reading"/>
-<img src="docs/assets/writing.png" width="80" title="Writing"/>
-<img src="docs/assets/pronun.png" width="80" title="Pronunciation"/>
-<img src="docs/assets/phrases.png" width="80" title="Phrases"/>
-<img src="docs/assets/chat2.png" width="80" title="Chat"/>
-
-</div>
-
-### Main Screens
-<div align="center">
-
-<img src="docs/assets/home.png" width="90" title="Home"/>
-<img src="docs/assets/progress.png" width="90" title="Progress"/>
-<img src="docs/assets/level.png" width="90" title="Levels"/>
-<img src="docs/assets/errors.png" width="90" title="My Mistakes"/>
-<img src="docs/assets/profile.png" width="90" title="Profile"/>
-
-</div>
-
----
-
-<div align="center">
-
-### 🦉 A Full-Stack project built with care
+### 🦉 A full-stack project built with care
 
 **React · C# .NET · SQL Server · AI**
 
