@@ -1,6 +1,7 @@
 using AutoMapper;
 using DataContext.model;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
@@ -100,6 +101,12 @@ namespace MyProject
             });
 
             var app = builder.Build();
+
+            // Apply EF Core migrations on startup so a fresh database (e.g. in Docker) is created automatically
+            using (var migrationContext = new GlottieContext(connection!))
+            {
+                migrationContext.Database.Migrate();
+            }
 
             if (app.Environment.IsDevelopment())
             {
